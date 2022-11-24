@@ -13,6 +13,8 @@ function indent() {
 export BUILD_DIR="$1"
 export ENV_DIR="$3"
 
+export POETRY_HOME=/tmp/.poetry
+
 BUILDPACK_VARIABLES="DISABLE_POETRY_CREATE_RUNTIME_FILE PYTHON_RUNTIME_VERSION"
 
 shopt -s nullglob
@@ -38,7 +40,7 @@ log "Install Poetry"
 curl -sSL https://install.python-poetry.org | python3 | indent
 
 log "Add Poetry to the PATH"
-export PATH="/app/.local/bin:$PATH"
+export PATH="$POETRY_HOME/bin:$PATH"
 
 if [ "${POETRY_VERSION:0:3}" = "1.2" ] ; then
     # Allow `poetry export` to work even if we aren't using the
