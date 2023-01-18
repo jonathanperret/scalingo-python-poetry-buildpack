@@ -27,12 +27,21 @@ for env_file in $BUILDPACK_VARIABLES ; do
     [ -f "$ENV_DIR/$env_file" ] && export "$(basename "$env_file")=$(cat "$ENV_DIR/$env_file" 2>/dev/null)"
 done
 
-if [ -z "${POETRY_VERSION:-}" ] ; then
+if [ -f "$ENV_DIR/POETRY_VERSION" ]; then
+  POETRY_VERSION=$(cat "$ENV_DIR/POETRY_VERSION")
+  echo "--> Found POETRY_VERSION variable, using version: $POETRY_VERSION"
+else
+  if [ -f "$BUILD_DIR/.poetry_version" ]; then
+    POETRY_VERSION=$(cat "$BUILD_DIR/.poetry_version")
+    echo "--> Found .poetry_version file, using version: $POETRY_VERSION"
+  else
     export POETRY_VERSION=1.2.2
     log "No Poetry version specified in POETRY_VERSION config var. Defaulting to $POETRY_VERSION."
-else
-    log "Using Poetry version from POETRY_VERSION config var: $POETRY_VERSION"
+  fi
 fi
+
+# Tolerate, but don't require, a 'v' prefix in the version
+POETRY_VERSION=${POETRY_VERSION#v}
 
 log "Generate requirements.txt with Poetry"
 

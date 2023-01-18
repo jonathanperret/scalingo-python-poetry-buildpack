@@ -26,11 +26,15 @@ heroku config:set PYTHON_RUNTIME_VERSION=3.9.1
 
 ### Poetry
 
-Poetry version can be specified by setting `POETRY_VERSION` in Heroku config vars. Otherwise, it will default to a hardcoded version.
+If the deployed repository has a .poetry_version file at the root containing a version number, this will be used as the version of Poetry. Example:
 
-```
-heroku config:set POETRY_VERSION=1.1.13
-```
+$ echo '2.12.0' > .poetry_version
+$ git add .poetry_version
+$ git commit -m "Set Poetry version"
+
+Alternately, set the POETRY_VERSION environment variable to the desired version.
+If both are present, the environment variable will be used.
+If none is present, it will default to a hardcoded version.
 
 Generally all variables starting with `POETRY_` are passed on to Poetry by this buildpack; see the corresponding [Poetry documentation](https://python-poetry.org/docs/configuration/#using-environment-variables) section for possible uses.
 
